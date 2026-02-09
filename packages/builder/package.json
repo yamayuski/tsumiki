@@ -1,0 +1,33 @@
+{
+  "name": "@tsumiki/builder",
+  "version": "0.1.0",
+  "description": "Build and package entities from editor to runtime",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "builder",
+    "bundler"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@tsumiki/utsutsu": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsdown": "^0.3.2",
+    "typescript": "^5.7.2"
+  }
+}

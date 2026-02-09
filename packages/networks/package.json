@@ -1,0 +1,35 @@
+{
+  "name": "@tsumiki/networks",
+  "version": "0.1.0",
+  "description": "WebSocket-based RPC for Tsumiki, based on kataribe",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "websocket",
+    "rpc",
+    "network"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "tsdown": "^0.3.2",
+    "typescript": "^5.7.2"
+  }
+}

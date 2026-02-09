@@ -1,0 +1,31 @@
+{
+  "name": "@tsumiki/utsutsu",
+  "version": "0.1.0",
+  "description": "Entity Component System for abstract 3D space in Tsumiki",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ecs",
+    "entity-component-system",
+    "3d"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsdown": "^0.3.2",
+    "typescript": "^5.7.2"
+  }
+}

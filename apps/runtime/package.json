@@ -1,0 +1,23 @@
+{
+  "name": "@tsumiki/runtime",
+  "version": "0.1.0",
+  "description": "3D Scene Runtime for Tsumiki",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tsumiki/ukiyoe": "workspace:*",
+    "@tsumiki/utsutsu": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  }
+}
