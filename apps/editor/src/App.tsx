@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { World } from '@tsumiki/utsutsu';
+import { World, type Entity } from '@tsumiki/utsutsu';
 import { BabylonRenderer } from '@tsumiki/ukiyoe';
 import { SceneBuilder } from '@tsumiki/builder';
 
@@ -28,8 +28,13 @@ export const App: React.FC = () => {
 
   const handleBuild = async () => {
     const builder = new SceneBuilder();
+    const world = worldRef.current;
+    
+    // Get entities from the world
+    const entities = Array.from((world as any).entities?.values() ?? []) as Entity[];
+    
     const sceneData = {
-      entities: [],
+      entities,
       metadata: {
         name: 'Test Scene',
         version: '1.0.0',

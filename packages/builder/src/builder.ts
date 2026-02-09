@@ -30,7 +30,7 @@ export class SceneBuilder {
     }
   }
 
-  private buildScene(sceneData: SceneData, options: BuildOptions): string {
+  private buildScene(sceneData: SceneData, _options: BuildOptions): string {
     // Package the scene data for runtime
     const serialized = JSON.stringify(sceneData);
     

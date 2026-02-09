@@ -4,6 +4,7 @@
 
 import { World } from '@tsumiki/utsutsu';
 import { BabylonRenderer, PhysicsEngine } from '@tsumiki/ukiyoe';
+import type { TransformComponent } from '@tsumiki/utsutsu';
 
 // Get canvas element
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -26,13 +27,14 @@ physics.initialize(scene).then(() => {
 
 // Create a simple test entity
 const entityId = 'test-entity';
-const entity = world.createEntity(entityId);
-world.addComponent(entityId, {
+world.createEntity(entityId);
+const transformComponent: TransformComponent = {
   type: 'transform',
   position: { x: 0, y: 0, z: 0 },
   rotation: { x: 0, y: 0, z: 0 },
   scale: { x: 1, y: 1, z: 1 },
-});
+};
+world.addComponent(entityId, transformComponent);
 
 console.log('Runtime initialized');
 console.log('World:', world);

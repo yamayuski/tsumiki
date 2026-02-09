@@ -37,7 +37,7 @@ export class BabylonRenderer {
     this.engine.dispose();
   }
 
-  syncWithWorld(world: World): void {
+  syncWithWorld(_world: World): void {
     // Sync ECS world entities with Babylon.js scene
     // This will be implemented to bridge utsutsu and Babylon.js
   }
