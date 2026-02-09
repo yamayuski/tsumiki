@@ -40,6 +40,9 @@ Tsumiki is a comprehensive TypeScript monorepo that provides tools for creating 
 ### Installation
 
 ```bash
+# Install pnpm if you haven't already
+npm install -g pnpm
+
 # Install dependencies
 pnpm install
 
@@ -50,12 +53,16 @@ pnpm build
 ### Development
 
 ```bash
-# Run all packages in development mode
+# Run all packages in development mode (with watch)
 pnpm dev
 
 # Run specific package
 pnpm --filter @tsumiki/editor dev
 pnpm --filter @tsumiki/runtime dev
+
+# Run specific library package
+pnpm --filter @tsumiki/networks dev
+pnpm --filter @tsumiki/utsutsu dev
 ```
 
 ### Building
@@ -66,6 +73,33 @@ pnpm build
 
 # Build specific package
 pnpm --filter @tsumiki/networks build
+pnpm --filter @tsumiki/editor build
+```
+
+### Type Checking
+
+```bash
+# Type check all packages
+pnpm typecheck
+
+# Type check specific package
+pnpm --filter @tsumiki/builder typecheck
+```
+
+### Running the Applications
+
+#### Editor
+```bash
+# Development mode (with hot reload)
+pnpm --filter @tsumiki/editor dev
+# Then open http://localhost:3000
+```
+
+#### Runtime
+```bash
+# Development mode (with hot reload)
+pnpm --filter @tsumiki/runtime dev
+# Then open http://localhost:3001
 ```
 
 ## Package Dependencies
@@ -77,6 +111,56 @@ apps/editor → packages/builder → packages/utsutsu
 apps/runtime → packages/ukiyoe → packages/utsutsu
              → packages/utsutsu
 ```
+
+## Architecture
+
+### Entity Component System (ECS)
+
+The `@tsumiki/utsutsu` package provides a renderer-agnostic ECS implementation:
+- **Entities**: Unique identifiable objects in the 3D world
+- **Components**: Data containers (Transform, Mesh, Camera, etc.)
+- **Systems**: Logic processors that operate on entities with specific components
+- **World**: Container and manager for all entities and systems
+
+### Rendering Pipeline
+
+The `@tsumiki/ukiyoe` package wraps Babylon.js to provide:
+- 3D rendering with WebGL
+- Physics simulation with Havok
+- Input management (keyboard, mouse)
+- Scene synchronization with ECS World
+
+### Build System
+
+The `@tsumiki/builder` package handles:
+- Serialization of ECS entities and components
+- Packaging scenes for runtime
+- Optimization and bundling of assets
+
+### Network Communication
+
+The `@tsumiki/networks` package provides:
+- WebSocket-based RPC communication
+- Client-server architecture
+- Inspired by [kataribe](https://github.com/yamayuski/kataribe)
+
+## Project Structure Details
+
+### Libraries (packages/)
+
+Each library package uses:
+- **tsdown** for building TypeScript to ESM
+- Strict TypeScript configuration
+- Declaration files (.d.mts) for type safety
+- Source maps for debugging
+
+### Applications (apps/)
+
+Each application uses:
+- **Vite** for fast development and optimized production builds
+- Hot Module Replacement (HMR) in development
+- Code splitting and tree shaking in production
+- TypeScript with React (for editor)
 
 ## License
 
