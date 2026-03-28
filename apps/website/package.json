@@ -1,0 +1,19 @@
+{
+  "name": "website",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "tsc && vp build",
+    "preview": "vp preview"
+  },
+  "dependencies": {
+    "@babylonjs/core": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
