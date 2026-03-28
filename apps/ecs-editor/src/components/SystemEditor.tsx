@@ -1,5 +1,5 @@
 import MonacoEditor from "@monaco-editor/react";
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { transform } from "sucrase";
 
 const DEFAULT_SYSTEM_CODE = `// User-defined ECS System (TypeScript)
@@ -16,9 +16,22 @@ export default {
 };
 `;
 
+/**
+ * Imperative handle exposed via ref so that the parent component (App) can
+ * synchronise the SystemEditor UI when undo/redo operations are performed.
+ */
+export interface SystemEditorHandle {
+  /** Update an entry's source code and mark it as applied (used for undo/redo of apply). */
+  setSource(id: string, source: string): void;
+  /** Add or restore an entry (used for undo of remove). */
+  restoreEntry(id: string, source: string): void;
+  /** Remove an entry (used for redo of remove). */
+  removeEntry(id: string): void;
+}
+
 interface SystemEditorProps {
-  onApply: (id: string, transpiledCode: string) => void;
-  onRemove: (id: string) => void;
+  onApply: (id: string, transpiledCode: string, sourceCode: string) => void;
+  onRemove: (id: string, sourceCode: string) => void;
 }
 
 interface UserSystemEntry {
@@ -39,7 +52,10 @@ function newEntry(): UserSystemEntry {
   };
 }
 
-export function SystemEditor({ onApply, onRemove }: SystemEditorProps) {
+export const SystemEditor = forwardRef<SystemEditorHandle, SystemEditorProps>(function SystemEditor(
+  { onApply, onRemove },
+  ref,
+) {
   const [systems, setSystems] = useState<UserSystemEntry[]>([newEntry()]);
   const [selectedId, setSelectedId] = useState<string>(systems[0]!.id);
   const editorRef = useRef<
@@ -47,6 +63,50 @@ export function SystemEditor({ onApply, onRemove }: SystemEditorProps) {
   >(null);
 
   const selected = systems.find((s) => s.id === selectedId);
+
+  // Keep a ref so that imperative handle callbacks always read the latest id.
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      /** Set the source of an entry and mark it as applied (used on undo/redo of apply). */
+      setSource(id: string, source: string) {
+        setSystems((prev) =>
+          prev.map((s) => (s.id === id ? { ...s, source, applied: true, error: null } : s)),
+        );
+        // If this entry is currently open in Monaco, push the value directly so
+        // that the uncontrolled editor reflects the change immediately.
+        if (selectedIdRef.current === id && editorRef.current) {
+          editorRef.current.setValue(source);
+        }
+      },
+      /** Add or restore an entry in the tab bar (used on undo of remove). */
+      restoreEntry(id: string, source: string) {
+        setSystems((prev) => {
+          if (prev.find((s) => s.id === id)) {
+            return prev.map((s) =>
+              s.id === id ? { ...s, source, applied: true, error: null } : s,
+            );
+          }
+          return [...prev, { id, source, applied: true, error: null }];
+        });
+        setSelectedId(id);
+      },
+      /** Remove an entry from the tab bar (used on redo of remove). */
+      removeEntry(id: string) {
+        setSystems((prev) => {
+          const next = prev.filter((s) => s.id !== id);
+          if (selectedIdRef.current === id && next.length > 0) {
+            setSelectedId(next[0]!.id);
+          }
+          return next;
+        });
+      },
+    }),
+    [],
+  );
 
   const updateSource = (source: string) => {
     setSystems((prev) =>
@@ -74,7 +134,7 @@ ${result.code.replace(/\bexport\s+default\b/, "__exports.default =")}
 return __exports.default;
 `;
 
-      onApply(id, wrapped);
+      onApply(id, wrapped, entry.source);
       setSystems((prev) =>
         prev.map((s) => (s.id === id ? { ...s, applied: true, error: null } : s)),
       );
@@ -93,7 +153,8 @@ return __exports.default;
   };
 
   const removeSystem = (id: string) => {
-    onRemove(id);
+    const entry = systems.find((s) => s.id === id);
+    onRemove(id, entry?.source ?? "");
     setSystems((prev) => {
       const next = prev.filter((s) => s.id !== id);
       if (selectedId === id && next.length > 0) {
@@ -184,4 +245,4 @@ return __exports.default;
       )}
     </div>
   );
-}
+});
